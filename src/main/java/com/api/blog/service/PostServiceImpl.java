@@ -1,10 +1,10 @@
 package com.api.blog.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,15 +38,14 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<PostResponseDto> findAll() {
-		List<PostModel> posts = postRepository.findAll();
-		List<PostResponseDto> dtos = new ArrayList();
+	 public Page<PostResponseDto> findAll(Pageable pageable) {
+        Page<PostModel> posts = postRepository.findAll(pageable);
 
-		for (PostModel post : posts) {
-			dtos.add(postMapper.toDto(post));
-		}
-		return dtos;
-	}
+        return posts.map(post -> {
+            PostResponseDto dto = postMapper.toDto(post);
+            return dto;
+        });
+    }
 
 	@Override
 	@Transactional(readOnly = true)
