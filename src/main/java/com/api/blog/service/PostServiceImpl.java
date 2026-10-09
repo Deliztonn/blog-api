@@ -1,9 +1,12 @@
 package com.api.blog.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +22,6 @@ import com.api.blog.model.PostModel;
 import com.api.blog.repository.ComentarioRepository;
 import com.api.blog.repository.PostRepository;
 
-
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -27,9 +29,9 @@ public class PostServiceImpl implements PostService {
 	private final PostMapper postMapper;
 	private final ComentarioRepository comentarioRepository;
 	private final ComentarioMapper comentarioMapper;
-	
-	
-	public PostServiceImpl(PostRepository postrepository, PostMapper postMapper, ComentarioRepository comentarioRepository, ComentarioMapper comentarioMapper) {
+
+	public PostServiceImpl(PostRepository postrepository, PostMapper postMapper,
+			ComentarioRepository comentarioRepository, ComentarioMapper comentarioMapper) {
 		this.postRepository = postrepository;
 		this.postMapper = postMapper;
 		this.comentarioRepository = comentarioRepository;
@@ -38,24 +40,42 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	@Transactional(readOnly = true)
-	 public Page<PostResponseDto> findAll(Pageable pageable) {
-        Page<PostModel> posts = postRepository.findAll(pageable);
+	public Page<PostResponseDto> findAll(Pageable pageable) {
+		Page<PostModel> posts = postRepository.findAll(pageable);
 
-        return posts.map(post -> {
-            PostResponseDto dto = postMapper.toDto(post);
-            return dto;
-        });
-    }
+		return posts.map(post -> {
+			PostResponseDto dto = postMapper.toDto(post);
+			return dto;
+		});
+	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public PostResponseDto findById(UUID id) {		
-Optional<PostModel> optionalPost = postRepository.findById(id);
-		
-if (optionalPost.isEmpty()) {
-	throw new RuntimeException("Post não encontrado com o ID: " + id);
-}
-PostModel post = optionalPost.get();
+	public Page<PostResponseDto> findAll(Pageable pageable, String titulo) {
+
+		Page<PostModel> posts;
+		if (titulo == null || titulo.isBlank()) {
+			posts = postRepository.findAll(pageable);
+		} else {
+			posts = postRepository.findByTituloContainingIgnoreCase(titulo, pageable);
+		}
+		List<PostResponseDto> response = new ArrayList<>();
+		for (PostModel post : posts.getContent()) {
+			PostResponseDto dto = postMapper.toDto(post);
+			response.add(dto);
+		}
+		return new PageImpl<>(response, pageable, posts.getTotalElements());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public PostResponseDto findById(UUID id) {
+		Optional<PostModel> optionalPost = postRepository.findById(id);
+
+		if (optionalPost.isEmpty()) {
+			throw new RuntimeException("Post não encontrado com o ID: " + id);
+		}
+		PostModel post = optionalPost.get();
 		return postMapper.toDto(post);
 	}
 
@@ -76,7 +96,7 @@ PostModel post = optionalPost.get();
 		post.adicionarComentario(comentario);
 		ComentarioModel saved = comentarioRepository.save(comentario);
 		return comentarioMapper.toDto(saved);
-		
+
 	}
 
 }

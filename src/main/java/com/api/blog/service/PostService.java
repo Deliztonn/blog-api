@@ -1,7 +1,9 @@
 package com.api.blog.service;
 
-import java.util.List;
 import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.api.blog.dto.request.ComentarioRequestDto;
 import com.api.blog.dto.request.PostRequestDto;
@@ -10,7 +12,9 @@ import com.api.blog.dto.response.PostResponseDto;
 
 public interface PostService {
 
-List<PostResponseDto> findAll();
+Page<PostResponseDto> findAll(Pageable pageable);
+
+Page<PostResponseDto> findAll(Pageable pageable, String titulo);
 
 PostResponseDto findById(UUID id);
 
