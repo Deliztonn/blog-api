@@ -20,7 +20,7 @@ public class ComentarioMapper {
 );
 		}
 		
-		public ComentarioResponse toDto(ComentarioModel entity) {
+		public static ComentarioResponse toDto(ComentarioModel entity) {
 			if (entity == null) {
 				return null;
 			}	

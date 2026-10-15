@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.Mapping;
 
 import com.api.blog.dto.request.PostRequestDto;
 import com.api.blog.dto.response.ComentarioResponse;
 import com.api.blog.dto.response.PostResponseDto;
 import com.api.blog.model.ComentarioModel;
 import com.api.blog.model.PostModel;
+
 
 @Component
 public class PostMapper {
@@ -52,5 +54,4 @@ public class PostMapper {
 				);
 	}
 	
-		
 	}

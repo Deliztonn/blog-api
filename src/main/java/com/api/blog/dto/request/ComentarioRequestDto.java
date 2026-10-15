@@ -6,6 +6,5 @@ public record ComentarioRequestDto(
 
 @NotBlank(message = "comentario.obrigatorio")
 	String comentario
-
 ) {
 }

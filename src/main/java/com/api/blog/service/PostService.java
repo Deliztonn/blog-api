@@ -22,4 +22,13 @@ PostResponseDto createPost (PostRequestDto dto);
 
 ComentarioResponse addComentario(UUID postId, ComentarioRequestDto dto);
 
+PostResponseDto updatePost(UUID id, PostRequestDto dto);
+
+void deletePost(UUID id);
+
+ComentarioResponse updateComentario(
+        UUID id, ComentarioRequestDto dto);
+void deleteComentario(UUID id);
+
+
 }
